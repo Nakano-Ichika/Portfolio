@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from "react";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import StockCard from "../components/StockCard";
 import AIReport from "../components/AIReport";
+import { API_BASE } from "../api";
+
 
 const SORT_OPTIONS = [
   { value: "sharpe",       label: "Sharpe" },
@@ -24,7 +26,7 @@ export default function Screener() {
   const [selected, setSelected] = useState(null);
 
   useEffect(() => {
-    fetch("/api/screener")
+    fetch(API_BASE + "/api/screener")
       .then((r) => {
         if (!r.ok) throw new Error("スクリーナーデータが見つかりません");
         return r.json();
