@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Sparkles, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { API_BASE } from "../api";
 
 /**
  * AIReport — generates and displays an AI investment report for a stock.
@@ -19,7 +20,7 @@ export default function AIReport({ stock }) {
     setReport(null);
 
     try {
-      const res = await fetch("/api/report", {
+      const res = await fetch(API_BASE + "/api/report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
