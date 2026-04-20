@@ -1,0 +1,24 @@
+# QuantPath — Python dependencies
+# Install with: pip install -r requirements.txt
+
+# Web framework
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+
+# Data
+pandas>=2.2.0
+numpy>=1.26.0
+yfinance>=0.2.38
+
+# ML
+scikit-learn>=1.4.0
+
+# HTTP / env
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# AI
+google-generativeai>=0.5.0
+
+# Dev / type support
+pydantic>=2.6.0

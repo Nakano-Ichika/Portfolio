@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-surface text-ink-primary font-sans antialiased;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+@layer components {
+  /* Shared card base */
+  .card {
+    @apply bg-card rounded-2xl shadow-card p-5;
+  }
+
+  /* Value chip: positive/negative coloured badge */
+  .chip-positive {
+    @apply inline-flex items-center gap-1 text-xs font-semibold text-positive bg-green-50 px-2 py-0.5 rounded-full;
+  }
+  .chip-negative {
+    @apply inline-flex items-center gap-1 text-xs font-semibold text-negative bg-red-50 px-2 py-0.5 rounded-full;
+  }
+
+  /* Subtle divider */
+  .divider {
+    @apply border-t border-border;
+  }
+}
+
+/* Smooth number transitions */
+.num-transition {
+  transition: color 0.3s ease;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
