@@ -4,6 +4,7 @@ import {
   ResponsiveContainer, Legend,
 } from "recharts";
 import { RefreshCw } from "lucide-react";
+import { API_BASE } from "../api";
 
 // A palette of colours for the donut slices
 const PALETTE = [
