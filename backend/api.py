@@ -1,5 +1,7 @@
 # api.py — QuantPath FastAPI Backend
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+import os, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
