@@ -6,7 +6,6 @@ import {
 import { TrendingUp, TrendingDown, Activity, AlertTriangle } from "lucide-react";
 import MetricCard from "../components/MetricCard";
 import { API_BASE } from "../api";
-import { API_BASE } from "../api";
 
 // Format helpers
 const pct = (v) => (v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`);
