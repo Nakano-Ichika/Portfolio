@@ -6,6 +6,7 @@ import {
 import { TrendingUp, TrendingDown, BarChart2, Percent, Shield } from "lucide-react";
 import MetricCard from "../components/MetricCard";
 import { API_BASE } from "../api";
+import { API_BASE } from "../api";
 
 const pct = (v) =>
   v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
