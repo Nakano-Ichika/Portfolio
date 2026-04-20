@@ -5,6 +5,7 @@ import {
 } from "recharts";
 import { TrendingUp, TrendingDown, BarChart2, Percent, Shield } from "lucide-react";
 import MetricCard from "../components/MetricCard";
+import { API_BASE } from "../api";
 
 const pct = (v) =>
   v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`;
@@ -42,8 +43,8 @@ export default function Backtest() {
     const fetchAll = async () => {
       try {
         const [tsRes, statsRes] = await Promise.all([
-          fetch("/api/backtest"),
-          fetch("/api/backtest/stats"),
+          fetch(API_BASE + "/api/backtest"),
+          fetch(API_BASE + "/api/backtest/stats"),
         ]);
         if (!tsRes.ok || !statsRes.ok)
           throw new Error("バックテストデータが見つかりません。backtest.py を実行してください。");
