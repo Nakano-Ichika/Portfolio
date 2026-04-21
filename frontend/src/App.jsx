@@ -4,6 +4,8 @@ import Dashboard from "./pages/Dashboard";
 import Screener from "./pages/Screener";
 import Portfolio from "./pages/Portfolio";
 import Backtest from "./pages/Backtest";
+import Cases from "./pages/Cases";
+import CaseStudy from "./pages/CaseStudy";
 
 export default function App() {
   return (
@@ -14,13 +16,16 @@ export default function App() {
       <main className="md:ml-56 pb-20 md:pb-0">
         <div className="max-w-5xl mx-auto px-4 py-6">
           <Routes>
-            <Route path="/"          element={<Dashboard />} />
-            <Route path="/screener"  element={<Screener />} />
-            <Route path="/portfolio" element={<Portfolio />} />
-            <Route path="/backtest"  element={<Backtest />} />
+            <Route path="/"                element={<Dashboard />} />
+            <Route path="/screener"        element={<Screener />} />
+            <Route path="/portfolio"       element={<Portfolio />} />
+            <Route path="/backtest"        element={<Backtest />} />
+            <Route path="/cases"           element={<Cases />} />
+            <Route path="/cases/:slug"     element={<CaseStudy />} />
           </Routes>
         </div>
       </main>
     </div>
   );
 }
+
