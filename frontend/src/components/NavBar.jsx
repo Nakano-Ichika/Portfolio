@@ -4,18 +4,17 @@ import {
   ScanSearch,
   Briefcase,
   FlaskConical,
+  BookOpen,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { to: "/",          label: "ダッシュボード", Icon: LayoutDashboard },
+  { to: "/cases",     label: "케이스",         Icon: BookOpen },
   { to: "/screener",  label: "スクリーナー",   Icon: ScanSearch },
   { to: "/portfolio", label: "ポートフォリオ", Icon: Briefcase },
   { to: "/backtest",  label: "バックテスト",   Icon: FlaskConical },
 ];
 
-/**
- * Sidebar navigation for desktop; bottom tab bar for mobile.
- */
 export default function NavBar() {
   return (
     <>
