@@ -107,12 +107,18 @@ def get_backtest_stats():
     mdd = ((series / series.cummax()) - 1).min() * 100
     cagr = (series.iloc[-1] ** (252 / len(series)) - 1) * 100
     sharpe = float(daily_r.mean() / daily_r.std() * (252 ** 0.5)) if daily_r.std() > 0 else 0.0
+    calmar = float(cagr / abs(float(mdd))) if mdd != 0 else 0.0
+
+    monthly = series.resample("ME").last().pct_change().dropna()
+    win_rate = float((monthly > 0).mean() * 100) if len(monthly) > 0 else 0.0
 
     return {
         "total_return": round(float(total_return), 2),
         "mdd": round(float(mdd), 2),
         "cagr": round(float(cagr), 2),
         "sharpe": round(sharpe, 2),
+        "calmar": round(calmar, 2),
+        "win_rate": round(win_rate, 1),
         "start_date": str(series.index[0].date()),
         "end_date": str(series.index[-1].date()),
     }

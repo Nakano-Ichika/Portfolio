@@ -42,7 +42,7 @@ export default function Portfolio() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/portfolio?capital=${cap}`);
+      const res = await fetch(`${API_BASE}/api/portfolio?capital=${cap}`);
       if (!res.ok) throw new Error("ポートフォリオデータが見つかりません");
       const data = await res.json();
       setPositions(data);

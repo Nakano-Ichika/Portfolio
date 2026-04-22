@@ -8,11 +8,11 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { to: "/",          label: "ダッシュボード", Icon: LayoutDashboard },
-  { to: "/cases",     label: "케이스",         Icon: BookOpen },
-  { to: "/screener",  label: "スクリーナー",   Icon: ScanSearch },
-  { to: "/portfolio", label: "ポートフォリオ", Icon: Briefcase },
-  { to: "/backtest",  label: "バックテスト",   Icon: FlaskConical },
+  { to: "/",          label: "Dashboard",  Icon: LayoutDashboard },
+  { to: "/cases",     label: "Research",   Icon: BookOpen },
+  { to: "/screener",  label: "Screener",   Icon: ScanSearch },
+  { to: "/portfolio", label: "Portfolio",  Icon: Briefcase },
+  { to: "/backtest",  label: "Backtest",   Icon: FlaskConical },
 ];
 
 export default function NavBar() {

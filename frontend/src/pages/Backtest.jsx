@@ -3,7 +3,7 @@ import {
   ComposedChart, Line, XAxis, YAxis, Tooltip,
   ResponsiveContainer, ReferenceLine, Legend, CartesianGrid,
 } from "recharts";
-import { TrendingUp, TrendingDown, BarChart2, Percent, Shield } from "lucide-react";
+import { TrendingUp, TrendingDown, BarChart2, Percent, Shield, Trophy } from "lucide-react";
 import MetricCard from "../components/MetricCard";
 import { API_BASE } from "../api";
 
@@ -47,7 +47,7 @@ export default function Backtest() {
           fetch(API_BASE + "/api/backtest/stats"),
         ]);
         if (!tsRes.ok || !statsRes.ok)
-          throw new Error("バックテストデータが見つかりません。backtest.py を実行してください。");
+          throw new Error("Backtest data not found. Run backtest.py first.");
 
         const ts = await tsRes.json();
         const st = await statsRes.json();
@@ -71,7 +71,7 @@ export default function Backtest() {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-ink-primary">バックテスト</h1>
+        <h1 className="text-xl font-bold text-ink-primary">Backtest</h1>
         {stats && (
           <p className="text-sm text-ink-secondary mt-0.5">
             {stats.start_date} → {stats.end_date}
@@ -87,9 +87,9 @@ export default function Backtest() {
       )}
 
       {/* Metric cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         <MetricCard
-          label="総収益率"
+          label="Total Return"
           value={stats ? pct(stats.total_return) : "…"}
           positive={isPositive}
           negative={!isPositive}
@@ -103,34 +103,48 @@ export default function Backtest() {
           icon={<Percent size={14} />}
         />
         <MetricCard
-          label="最大DD"
+          label="Max Drawdown"
           value={stats ? pct(stats.mdd) : "…"}
           negative
-          sub="最大ドローダウン"
           icon={<Shield size={14} />}
         />
         <MetricCard
-          label="Sharpe"
+          label="Sharpe Ratio"
           value={stats ? fmt2(stats.sharpe) : "…"}
           positive={stats?.sharpe >= 1}
           negative={stats?.sharpe < 0}
           icon={<BarChart2 size={14} />}
+        />
+        <MetricCard
+          label="Calmar Ratio"
+          value={stats ? fmt2(stats.calmar) : "…"}
+          positive={stats?.calmar >= 0.5}
+          negative={stats?.calmar < 0}
+          sub="CAGR / |Max DD|"
+          icon={<Trophy size={14} />}
+        />
+        <MetricCard
+          label="Monthly Win Rate"
+          value={stats ? `${stats.win_rate}%` : "…"}
+          positive={stats?.win_rate >= 55}
+          negative={stats?.win_rate < 45}
+          icon={<TrendingUp size={14} />}
         />
       </div>
 
       {/* Equity chart */}
       <div className="card">
         <p className="text-sm font-semibold text-ink-primary mb-4">
-          累積収益率 — ポートフォリオ
+          Cumulative Return — Portfolio
         </p>
 
         {loading ? (
           <div className="h-64 flex items-center justify-center">
-            <span className="text-ink-tertiary text-sm animate-pulse">読み込み中…</span>
+            <span className="text-ink-tertiary text-sm animate-pulse">Loading…</span>
           </div>
         ) : error ? (
           <div className="h-64 flex items-center justify-center">
-            <span className="text-ink-tertiary text-sm">データなし</span>
+            <span className="text-ink-tertiary text-sm">No data</span>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={260}>
@@ -161,7 +175,7 @@ export default function Backtest() {
               <Line
                 type="monotone"
                 dataKey="value"
-                name="ポートフォリオ"
+                name="Portfolio"
                 stroke="#3182F6"
                 strokeWidth={2}
                 dot={false}
@@ -176,16 +190,18 @@ export default function Backtest() {
       {stats && (
         <div className="card">
           <p className="text-sm font-semibold text-ink-primary mb-4">
-            パフォーマンス詳細
+            Performance Detail
           </p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {[
-              { label: "計測期間 開始", value: stats.start_date },
-              { label: "計測期間 終了",  value: stats.end_date },
-              { label: "総収益率",        value: pct(stats.total_return) },
-              { label: "CAGR (年換算)",  value: pct(stats.cagr) },
-              { label: "最大ドローダウン", value: pct(stats.mdd) },
-              { label: "Sharpe比",       value: fmt2(stats.sharpe) },
+              { label: "Period Start",     value: stats.start_date },
+              { label: "Period End",       value: stats.end_date },
+              { label: "Total Return",     value: pct(stats.total_return) },
+              { label: "CAGR",             value: pct(stats.cagr) },
+              { label: "Max Drawdown",     value: pct(stats.mdd) },
+              { label: "Sharpe Ratio",     value: fmt2(stats.sharpe) },
+              { label: "Calmar Ratio",     value: fmt2(stats.calmar) },
+              { label: "Monthly Win Rate", value: `${stats.win_rate}%` },
             ].map(({ label, value }) => (
               <div key={label} className="bg-surface rounded-xl px-3 py-2.5">
                 <p className="text-[10px] text-ink-tertiary font-medium uppercase mb-0.5">
