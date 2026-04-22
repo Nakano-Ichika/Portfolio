@@ -25,9 +25,14 @@ export default function NavBar() {
           <span className="w-7 h-7 rounded-lg bg-brand-500 flex items-center justify-center">
             <span className="text-white text-xs font-bold">QP</span>
           </span>
-          <span className="font-semibold text-ink-primary text-base tracking-tight">
-            QuantPath
-          </span>
+          <div>
+            <span className="font-semibold text-ink-primary text-base tracking-tight block">
+              QuantPath
+            </span>
+            <span className="text-[10px] text-ink-tertiary leading-tight">
+              Japan equity · Factor model
+            </span>
+          </div>
         </div>
 
         {NAV_ITEMS.map(({ to, label, Icon }) => (

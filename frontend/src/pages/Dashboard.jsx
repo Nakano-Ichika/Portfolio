@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   ComposedChart, Area, Line, XAxis, YAxis, Tooltip,
   ResponsiveContainer, ReferenceLine, Legend, CartesianGrid,
 } from "recharts";
-import { TrendingUp, TrendingDown, Activity, AlertTriangle } from "lucide-react";
-import MetricCard from "../components/MetricCard";
+import { ArrowRight, AlertTriangle } from "lucide-react";
 import { API_BASE } from "../api";
 
-const pct = (v) => (v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(2)}%`);
-const fmt2 = (v) => (v == null ? "—" : v.toFixed(2));
+const pct = (v) =>
+  v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`;
+const fmt2 = (v) =>
+  v == null ? "—" : v.toFixed(2);
 
-function EquityTooltip({ active, payload, label }) {
+function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-card border border-border rounded-xl px-3 py-2 text-xs shadow-card-md space-y-1">
@@ -35,6 +37,7 @@ function EquityTooltip({ active, payload, label }) {
 export default function Dashboard() {
   const [series, setSeries] = useState([]);
   const [stats, setStats] = useState(null);
+  const [benchTotal, setBenchTotal] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -47,9 +50,8 @@ export default function Dashboard() {
           fetch(API_BASE + "/api/backtest/benchmark"),
         ]);
 
-        if (!tsRes.ok || !statsRes.ok) {
+        if (!tsRes.ok || !statsRes.ok)
           throw new Error("Backtest data not found. Run backtest.py first.");
-        }
 
         const ts = await tsRes.json();
         const st = await statsRes.json();
@@ -57,14 +59,17 @@ export default function Dashboard() {
         let benchMap = {};
         if (benchRes.ok) {
           const bench = await benchRes.json();
+          if (bench.length > 0)
+            setBenchTotal((bench[bench.length - 1].value - 1) * 100);
           bench.forEach((p) => { benchMap[p.date] = p.value; });
         }
 
         const step = Math.max(1, Math.floor(ts.length / 300));
-        const merged = ts
-          .filter((_, i) => i % step === 0 || i === ts.length - 1)
-          .map((p) => ({ ...p, benchmark: benchMap[p.date] ?? null }));
-        setSeries(merged);
+        setSeries(
+          ts
+            .filter((_, i) => i % step === 0 || i === ts.length - 1)
+            .map((p) => ({ ...p, benchmark: benchMap[p.date] ?? null }))
+        );
         setStats(st);
       } catch (err) {
         setError(err.message);
@@ -72,23 +77,28 @@ export default function Dashboard() {
         setLoading(false);
       }
     };
-
     fetchAll();
   }, []);
 
-  const isPositive = stats ? stats.total_return >= 0 : true;
+  const isPositive = (stats?.total_return ?? 0) >= 0;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-8">
+
+      {/* Thesis */}
       <div>
-        <h1 className="text-xl font-bold text-ink-primary">Dashboard</h1>
+        <p className="text-sm text-ink-secondary leading-relaxed">
+          A factor model for Japan equities — 51 TSE Prime stocks screened by
+          momentum, volatility, and fundamentals. This is the backtest.
+        </p>
         {stats && (
-          <p className="text-sm text-ink-secondary mt-0.5">
+          <p className="text-xs text-ink-tertiary mt-1.5">
             {stats.start_date} → {stats.end_date}
           </p>
         )}
       </div>
 
+      {/* Error */}
       {error && (
         <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3">
           <AlertTriangle size={16} className="text-amber-500 mt-0.5 shrink-0" />
@@ -96,73 +106,53 @@ export default function Dashboard() {
         </div>
       )}
 
+      {/* Key numbers */}
       {!error && (
-        <div className="card bg-gradient-to-br from-brand-500 to-brand-700 text-white">
-          <p className="text-sm font-medium opacity-80 mb-1">Portfolio Cumulative Return</p>
-          {loading ? (
-            <div className="h-10 w-32 bg-white/20 rounded-lg animate-pulse" />
-          ) : (
-            <div className="flex items-end gap-3">
-              <span className="text-4xl font-bold tabular-nums">
-                {stats ? pct(stats.total_return) : "—"}
-              </span>
-              {stats && (
-                <span className="text-sm opacity-80 mb-1 flex items-center gap-1">
-                  {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
-                  vs N225 benchmark
-                </span>
-              )}
-            </div>
-          )}
+        <div className="flex items-end gap-8">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-ink-tertiary mb-2">
+              Portfolio
+            </p>
+            <p className={`text-5xl font-bold tabular-nums leading-none ${
+              loading
+                ? "text-ink-tertiary"
+                : isPositive
+                ? "text-positive"
+                : "text-negative"
+            }`}>
+              {loading ? "—" : pct(stats?.total_return)}
+            </p>
+          </div>
+
+          <p className="text-base text-ink-tertiary mb-1">vs</p>
+
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-ink-tertiary mb-2">
+              N225
+            </p>
+            <p className="text-5xl font-bold tabular-nums leading-none text-ink-tertiary">
+              {loading || benchTotal == null ? "—" : pct(benchTotal)}
+            </p>
+          </div>
         </div>
       )}
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <MetricCard
-          label="CAGR"
-          value={stats ? pct(stats.cagr) : "…"}
-          positive={stats?.cagr >= 0}
-          negative={stats?.cagr < 0}
-          icon={<Activity size={14} />}
-        />
-        <MetricCard
-          label="Sharpe"
-          value={stats ? fmt2(stats.sharpe) : "…"}
-          positive={stats?.sharpe >= 1}
-          negative={stats?.sharpe < 0}
-        />
-        <MetricCard
-          label="Max Drawdown"
-          value={stats ? pct(stats.mdd) : "…"}
-          negative
-        />
-        <MetricCard
-          label="Total Return"
-          value={stats ? pct(stats.total_return) : "…"}
-          positive={stats?.total_return >= 0}
-          negative={stats?.total_return < 0}
-        />
-      </div>
-
+      {/* Chart */}
       <div className="card">
-        <p className="text-sm font-semibold text-ink-primary mb-4">
-          Cumulative Return — Portfolio vs N225
-        </p>
-
         {loading ? (
-          <div className="h-56 flex items-center justify-center">
+          <div className="h-64 flex items-center justify-center">
             <span className="text-ink-tertiary text-sm animate-pulse">Loading…</span>
           </div>
         ) : error ? (
-          <div className="h-56 flex items-center justify-center">
+          <div className="h-64 flex items-center justify-center">
             <span className="text-ink-tertiary text-sm">No data</span>
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height={220}>
+          <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={series} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
               <defs>
                 <linearGradient id="portfolioGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#3182F6" stopOpacity={0.12} />
+                  <stop offset="5%" stopColor="#3182F6" stopOpacity={0.10} />
                   <stop offset="95%" stopColor="#3182F6" stopOpacity={0} />
                 </linearGradient>
               </defs>
@@ -180,7 +170,7 @@ export default function Dashboard() {
                 axisLine={false}
                 tickFormatter={(v) => v.toFixed(2)}
               />
-              <Tooltip content={<EquityTooltip />} />
+              <Tooltip content={<ChartTooltip />} />
               <Legend
                 iconType="circle"
                 iconSize={8}
@@ -213,6 +203,52 @@ export default function Dashboard() {
           </ResponsiveContainer>
         )}
       </div>
+
+      {/* Two stats */}
+      {!error && (
+        <div className="card flex divide-x divide-border">
+          <div className="flex-1 px-5 py-3.5">
+            <p className="text-[10px] uppercase tracking-widest text-ink-tertiary mb-1.5">
+              CAGR
+            </p>
+            <p className={`text-2xl font-bold tabular-nums ${
+              !stats
+                ? "text-ink-tertiary"
+                : (stats.cagr ?? 0) >= 0
+                ? "text-positive"
+                : "text-negative"
+            }`}>
+              {stats ? pct(stats.cagr) : "—"}
+            </p>
+          </div>
+          <div className="flex-1 px-5 py-3.5">
+            <p className="text-[10px] uppercase tracking-widest text-ink-tertiary mb-1.5">
+              Sharpe
+            </p>
+            <p className={`text-2xl font-bold tabular-nums ${
+              !stats
+                ? "text-ink-tertiary"
+                : (stats.sharpe ?? 0) >= 1
+                ? "text-positive"
+                : (stats.sharpe ?? 0) < 0
+                ? "text-negative"
+                : "text-ink-primary"
+            }`}>
+              {stats ? fmt2(stats.sharpe) : "—"}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* Research link */}
+      <Link
+        to="/cases"
+        className="inline-flex items-center gap-1.5 text-sm text-brand-500 hover:underline"
+      >
+        Explore the Research
+        <ArrowRight size={14} />
+      </Link>
+
     </div>
   );
 }
