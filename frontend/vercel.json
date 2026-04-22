@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://portfolio-m18s.onrender.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
