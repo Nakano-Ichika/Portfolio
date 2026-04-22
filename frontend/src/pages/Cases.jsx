@@ -3,11 +3,11 @@ import { CASES } from "../data/cases";
 import { ArrowRight, Factory, TrendingUp, AlertCircle, BarChart2, Layers } from "lucide-react";
 
 const TYPE_META = {
-  industry:    { label: "산업 분석",    color: "text-blue-500   bg-blue-50   border-blue-200",   Icon: Factory },
-  performance: { label: "실적 분석",    color: "text-green-500  bg-green-50  border-green-200",  Icon: TrendingUp },
-  investment:  { label: "투자 판단",    color: "text-purple-500 bg-purple-50 border-purple-200", Icon: BarChart2 },
-  growth:      { label: "성장 전략",    color: "text-orange-500 bg-orange-50 border-orange-200", Icon: Layers },
-  crisis:      { label: "위기 분석",    color: "text-red-500    bg-red-50    border-red-200",    Icon: AlertCircle },
+  industry:    { label: "Industry",    color: "text-blue-500   bg-blue-50   border-blue-200",   Icon: Factory },
+  performance: { label: "Performance", color: "text-green-500  bg-green-50  border-green-200",  Icon: TrendingUp },
+  investment:  { label: "Investment",  color: "text-purple-500 bg-purple-50 border-purple-200", Icon: BarChart2 },
+  growth:      { label: "Growth",      color: "text-orange-500 bg-orange-50 border-orange-200", Icon: Layers },
+  crisis:      { label: "Crisis",      color: "text-red-500    bg-red-50    border-red-200",    Icon: AlertCircle },
 };
 
 export default function Cases() {
@@ -17,9 +17,9 @@ export default function Cases() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-ink-primary">케이스 스터디</h1>
+        <h1 className="text-xl font-bold text-ink-primary">Research</h1>
         <p className="text-sm text-ink-secondary mt-1">
-          문제를 구조화하고, 숫자로 검증하고, 결론을 낸다.
+          Structure the problem, validate with data, commit to a conclusion.
         </p>
       </div>
 
@@ -82,7 +82,7 @@ export default function Cases() {
       {/* Empty state for drafts hint */}
       {published.length === 0 && (
         <div className="card text-center py-12 text-ink-tertiary text-sm">
-          케이스를 준비 중입니다.
+          Case studies coming soon.
         </div>
       )}
     </div>

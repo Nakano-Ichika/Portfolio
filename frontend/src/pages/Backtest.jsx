@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   ComposedChart, Line, XAxis, YAxis, Tooltip,
   ResponsiveContainer, ReferenceLine, Legend, CartesianGrid,
@@ -12,35 +12,53 @@ const pct = (v) =>
 const fmt2 = (v) =>
   v == null ? "—" : v.toFixed(2);
 
+const MODE_CONFIG = {
+  simple: {
+    label: "In-Sample",
+    description: "Equal-weight, full-period — selection uses the entire backtest window.",
+    apiPath: "/api/backtest",
+  },
+  walkforward: {
+    label: "Walk-Forward",
+    description: "Out-of-sample — stocks re-selected every 6 months using only past data. No look-ahead bias.",
+    apiPath: "/api/backtest/walkforward",
+  },
+};
+
 function ChartTooltip({ active, payload, label }) {
   if (!active || !payload?.length) return null;
   return (
     <div className="bg-card border border-border rounded-xl px-3 py-2 text-xs shadow-card-md space-y-1">
       <p className="text-ink-secondary font-medium">{label}</p>
-      {payload.map((p) => (
-        <div key={p.dataKey} className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
-          <span className="text-ink-secondary">{p.name}:</span>
-          <span className="font-semibold text-ink-primary">
-            {p.value?.toFixed(4)}
-          </span>
-          <span className={p.value >= 1 ? "text-positive" : "text-negative"}>
-            ({((p.value - 1) * 100).toFixed(1)}%)
-          </span>
-        </div>
-      ))}
+      {payload.map((p) => {
+        if (p.value == null) return null;
+        return (
+          <div key={p.dataKey} className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full" style={{ background: p.color }} />
+            <span className="text-ink-secondary">{p.name}:</span>
+            <span className="font-semibold text-ink-primary">{p.value.toFixed(4)}</span>
+            <span className={p.value >= 1 ? "text-positive" : "text-negative"}>
+              ({((p.value - 1) * 100).toFixed(1)}%)
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
 
 export default function Backtest() {
+  const [mode, setMode] = useState("simple");
   const [series, setSeries] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [chartLoading, setChartLoading] = useState(false);
+  const [wfUnavailable, setWfUnavailable] = useState(false);
   const [error, setError] = useState(null);
 
+  // Fetch stats + benchmark once
   useEffect(() => {
-    const fetchAll = async () => {
+    const init = async () => {
       try {
         const [tsRes, statsRes, benchRes] = await Promise.all([
           fetch(API_BASE + "/api/backtest"),
@@ -53,14 +71,12 @@ export default function Backtest() {
         const ts = await tsRes.json();
         const st = await statsRes.json();
 
-        // Merge benchmark by date (ignore if unavailable)
         let benchMap = {};
         if (benchRes.ok) {
           const bench = await benchRes.json();
           bench.forEach((p) => { benchMap[p.date] = p.value; });
         }
 
-        // Thin out for chart performance
         const step = Math.max(1, Math.floor(ts.length / 300));
         const merged = ts
           .filter((_, i) => i % step === 0 || i === ts.length - 1)
@@ -73,10 +89,74 @@ export default function Backtest() {
         setLoading(false);
       }
     };
-    fetchAll();
+    init();
   }, []);
 
+  // Fetch walk-forward series on mode switch
+  const switchToWalkForward = useCallback(async () => {
+    setChartLoading(true);
+    setWfUnavailable(false);
+    try {
+      const [wfRes, benchRes] = await Promise.all([
+        fetch(API_BASE + "/api/backtest/walkforward"),
+        fetch(API_BASE + "/api/backtest/benchmark"),
+      ]);
+      if (!wfRes.ok) {
+        setWfUnavailable(true);
+        return;
+      }
+      const wf = await wfRes.json();
+      let benchMap = {};
+      if (benchRes.ok) {
+        const bench = await benchRes.json();
+        bench.forEach((p) => { benchMap[p.date] = p.value; });
+      }
+      const step = Math.max(1, Math.floor(wf.length / 300));
+      const merged = wf
+        .filter((_, i) => i % step === 0 || i === wf.length - 1)
+        .map((p) => ({ ...p, benchmark: benchMap[p.date] ?? null }));
+      setSeries(merged);
+    } catch {
+      setWfUnavailable(true);
+    } finally {
+      setChartLoading(false);
+    }
+  }, []);
+
+  const switchToSimple = useCallback(async () => {
+    setChartLoading(true);
+    setWfUnavailable(false);
+    try {
+      const [tsRes, benchRes] = await Promise.all([
+        fetch(API_BASE + "/api/backtest"),
+        fetch(API_BASE + "/api/backtest/benchmark"),
+      ]);
+      if (!tsRes.ok) return;
+      const ts = await tsRes.json();
+      let benchMap = {};
+      if (benchRes.ok) {
+        const bench = await benchRes.json();
+        bench.forEach((p) => { benchMap[p.date] = p.value; });
+      }
+      const step = Math.max(1, Math.floor(ts.length / 300));
+      const merged = ts
+        .filter((_, i) => i % step === 0 || i === ts.length - 1)
+        .map((p) => ({ ...p, benchmark: benchMap[p.date] ?? null }));
+      setSeries(merged);
+    } finally {
+      setChartLoading(false);
+    }
+  }, []);
+
+  const handleModeChange = (m) => {
+    if (m === mode) return;
+    setMode(m);
+    if (m === "walkforward") switchToWalkForward();
+    else switchToSimple();
+  };
+
   const isPositive = (stats?.total_return ?? 0) >= 0;
+  const cfg = MODE_CONFIG[mode];
 
   return (
     <div className="space-y-5">
@@ -145,11 +225,41 @@ export default function Backtest() {
 
       {/* Equity chart */}
       <div className="card">
-        <p className="text-sm font-semibold text-ink-primary mb-4">
-          Cumulative Return — Portfolio
-        </p>
+        {/* Mode toggle */}
+        <div className="flex items-start justify-between gap-4 mb-4 flex-wrap">
+          <div>
+            <p className="text-sm font-semibold text-ink-primary">
+              Cumulative Return — {cfg.label}
+            </p>
+            <p className="text-xs text-ink-secondary mt-0.5 max-w-sm">
+              {cfg.description}
+            </p>
+          </div>
+          <div className="flex items-center bg-surface rounded-xl p-1 gap-1 shrink-0">
+            {Object.entries(MODE_CONFIG).map(([key, { label }]) => (
+              <button
+                key={key}
+                onClick={() => handleModeChange(key)}
+                className={[
+                  "px-3 py-1.5 rounded-lg text-xs font-medium transition-colors",
+                  mode === key
+                    ? "bg-card text-ink-primary shadow-sm"
+                    : "text-ink-secondary hover:text-ink-primary",
+                ].join(" ")}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        {loading ? (
+        {wfUnavailable && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-xs text-amber-700 mb-4">
+            Walk-forward data not yet available. Run <code className="font-mono">backtest_wf.py</code> on the server to generate it.
+          </div>
+        )}
+
+        {loading || chartLoading ? (
           <div className="h-64 flex items-center justify-center">
             <span className="text-ink-tertiary text-sm animate-pulse">Loading…</span>
           </div>
@@ -157,7 +267,7 @@ export default function Backtest() {
           <div className="h-64 flex items-center justify-center">
             <span className="text-ink-tertiary text-sm">No data</span>
           </div>
-        ) : (
+        ) : !wfUnavailable ? (
           <ResponsiveContainer width="100%" height={260}>
             <ComposedChart data={series} margin={{ top: 4, right: 4, bottom: 0, left: -20 }}>
               <CartesianGrid strokeDasharray="4 2" stroke="#E5E8EB" vertical={false} />
@@ -204,7 +314,7 @@ export default function Backtest() {
               />
             </ComposedChart>
           </ResponsiveContainer>
-        )}
+        ) : null}
       </div>
 
       {/* Stats detail table */}

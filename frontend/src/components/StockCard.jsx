@@ -18,7 +18,7 @@ export default function StockCard({ code, momentum_pct, volatility_pct, sharpe, 
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-ink-secondary font-medium">コード</p>
+          <p className="text-xs text-ink-secondary font-medium">Code</p>
           <p className="text-lg font-bold text-ink-primary">{code}</p>
         </div>
         <span
@@ -40,18 +40,16 @@ export default function StockCard({ code, momentum_pct, volatility_pct, sharpe, 
       {/* Key metrics grid */}
       <div className="grid grid-cols-3 gap-2 text-center">
         <MetricCell label="Sharpe" value={sharpe?.toFixed(2)} />
-        <MetricCell label="ボラ" value={`${volatility_pct?.toFixed(1)}%`} />
-        <MetricCell label="モメンタム" value={`${momentum_pct?.toFixed(1)}%`} highlight={isPositive} />
+        <MetricCell label="Vol%" value={`${volatility_pct?.toFixed(1)}%`} />
+        <MetricCell label="Momentum" value={`${momentum_pct?.toFixed(1)}%`} highlight={isPositive} />
       </div>
 
-      {/* Fundamentals (only shown if non-zero) */}
-      {(per > 0 || pbr > 0 || roe > 0) && (
-        <div className="grid grid-cols-3 gap-2 text-center pt-1 border-t border-border">
-          <MetricCell label="PER" value={per > 0 ? `${per}x` : "—"} />
-          <MetricCell label="PBR" value={pbr > 0 ? `${pbr}x` : "—"} />
-          <MetricCell label="ROE" value={roe > 0 ? `${roe}%` : "—"} />
-        </div>
-      )}
+      {/* Fundamentals — always shown for uniform card height */}
+      <div className="grid grid-cols-3 gap-2 text-center pt-1 border-t border-border">
+        <MetricCell label="PER" value={per > 0 ? `${per}x` : "—"} />
+        <MetricCell label="PBR" value={pbr > 0 ? `${pbr}x` : "—"} />
+        <MetricCell label="ROE" value={roe > 0 ? `${roe}%` : "—"} />
+      </div>
     </button>
   );
 }

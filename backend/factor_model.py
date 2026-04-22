@@ -2,8 +2,8 @@
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 
-PRICE_FACTORS = ["Momentum_pct", "Volatility_pct", "Sharpe"]
-FEATURE_FACTORS = ["Momentum_pct", "Volatility_pct"]
+PRICE_FACTORS = ["Momentum_pct", "Volatility_pct", "Sharpe", "PER", "PBR", "ROE"]
+FEATURE_FACTORS = ["Momentum_pct", "Volatility_pct", "PER", "PBR", "ROE"]
 
 
 def get_correlation_data(df: pd.DataFrame) -> dict:

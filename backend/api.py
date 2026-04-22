@@ -31,10 +31,11 @@ app.add_middleware(
 # File paths (configurable via .env)
 # ---------------------------------------------------------------------------
 
-SCREENER_PATH   = os.getenv("SCREENER_PATH",    "./screener_result.csv")
-BACKTEST_PATH   = os.getenv("BACKTEST_OUTPUT",  "./backtest_result.csv")
-BENCHMARK_PATH  = os.getenv("BENCHMARK_OUTPUT", "./benchmark_result.csv")
-PORTFOLIO_PATH  = os.getenv("PORTFOLIO_PATH",   "./portfolio.csv")
+SCREENER_PATH   = os.getenv("SCREENER_PATH",       "./screener_result.csv")
+BACKTEST_PATH   = os.getenv("BACKTEST_OUTPUT",    "./backtest_result.csv")
+BENCHMARK_PATH  = os.getenv("BENCHMARK_OUTPUT",   "./benchmark_result.csv")
+WF_PATH         = os.getenv("WF_BACKTEST_OUTPUT", "./wf_backtest_result.csv")
+PORTFOLIO_PATH  = os.getenv("PORTFOLIO_PATH",     "./portfolio.csv")
 
 
 def _load_screener() -> pd.DataFrame:
@@ -55,6 +56,16 @@ def _load_backtest() -> pd.Series:
             detail="Backtest results not found. Run backtest.py first.",
         )
     df = pd.read_csv(BACKTEST_PATH, index_col=0, parse_dates=True)
+    return df.iloc[:, 0]
+
+
+def _load_wf() -> pd.Series:
+    if not os.path.exists(WF_PATH):
+        raise HTTPException(
+            status_code=404,
+            detail="Walk-forward data not found. Run backtest_wf.py first.",
+        )
+    df = pd.read_csv(WF_PATH, index_col=0, parse_dates=True)
     return df.iloc[:, 0]
 
 
@@ -133,6 +144,16 @@ def get_backtest_stats():
         "start_date": str(series.index[0].date()),
         "end_date": str(series.index[-1].date()),
     }
+
+
+@app.get("/api/backtest/walkforward")
+def get_walkforward():
+    """Returns walk-forward (out-of-sample) cumulative return series as [{date, value}]."""
+    series = _load_wf()
+    return [
+        {"date": str(idx.date()), "value": round(float(v), 6)}
+        for idx, v in series.items()
+    ]
 
 
 @app.get("/api/backtest/benchmark")

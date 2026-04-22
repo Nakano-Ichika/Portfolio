@@ -1,14 +1,15 @@
 import { useEffect, useState, useMemo } from "react";
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp } from "lucide-react";
 import StockCard from "../components/StockCard";
 import AIReport from "../components/AIReport";
+import FactorPanel from "../components/FactorPanel";
 import { API_BASE } from "../api";
 
 
 const SORT_OPTIONS = [
-  { value: "sharpe",       label: "Sharpe" },
-  { value: "momentum_pct", label: "モメンタム" },
-  { value: "volatility_pct", label: "ボラティリティ" },
+  { value: "sharpe",         label: "Sharpe" },
+  { value: "momentum_pct",   label: "Momentum" },
+  { value: "volatility_pct", label: "Volatility" },
 ];
 
 export default function Screener() {
@@ -25,10 +26,36 @@ export default function Screener() {
   // Selected stock for AI report
   const [selected, setSelected] = useState(null);
 
+  // Factor analysis
+  const [factorOpen, setFactorOpen] = useState(false);
+  const [importance, setImportance] = useState(null);
+  const [correlation, setCorrelation] = useState(null);
+  const [factorLoading, setFactorLoading] = useState(false);
+
+  const loadFactors = async () => {
+    if (importance) return; // already loaded
+    setFactorLoading(true);
+    try {
+      const [impRes, corrRes] = await Promise.all([
+        fetch(API_BASE + "/api/factor/importance"),
+        fetch(API_BASE + "/api/factor/correlation"),
+      ]);
+      if (impRes.ok) setImportance(await impRes.json());
+      if (corrRes.ok) setCorrelation(await corrRes.json());
+    } finally {
+      setFactorLoading(false);
+    }
+  };
+
+  const toggleFactor = () => {
+    if (!factorOpen) loadFactors();
+    setFactorOpen((v) => !v);
+  };
+
   useEffect(() => {
     fetch(API_BASE + "/api/screener")
       .then((r) => {
-        if (!r.ok) throw new Error("スクリーナーデータが見つかりません");
+        if (!r.ok) throw new Error("Screener data not found. Run fundamentals.py first.");
         return r.json();
       })
       .then(setStocks)
@@ -71,9 +98,9 @@ export default function Screener() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-ink-primary">スクリーナー</h1>
+          <h1 className="text-xl font-bold text-ink-primary">Screener</h1>
           <p className="text-sm text-ink-secondary mt-0.5">
-            {loading ? "読み込み中…" : `${filtered.length} / ${stocks.length} 銘柄`}
+            {loading ? "Loading…" : `${filtered.length} / ${stocks.length} stocks`}
           </p>
         </div>
         <button
@@ -86,7 +113,7 @@ export default function Screener() {
           ].join(" ")}
         >
           <SlidersHorizontal size={14} />
-          フィルター
+          Filters
         </button>
       </div>
 
@@ -95,7 +122,7 @@ export default function Screener() {
         <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-tertiary" />
         <input
           type="text"
-          placeholder="銘柄コードを検索…"
+          placeholder="Search by code…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="w-full bg-card border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm text-ink-primary placeholder-ink-tertiary focus:outline-none focus:border-brand-500 transition-colors"
@@ -116,7 +143,7 @@ export default function Screener() {
           {/* Sort */}
           <div>
             <label className="block text-xs font-medium text-ink-secondary mb-1.5">
-              並び替え
+              Sort by
             </label>
             <div className="flex gap-2 flex-wrap">
               {SORT_OPTIONS.map((opt) => (
@@ -139,7 +166,7 @@ export default function Screener() {
           {/* Momentum slider */}
           <div>
             <label className="flex items-center justify-between text-xs font-medium text-ink-secondary mb-1.5">
-              最小モメンタム
+              Min Momentum
               <span className="text-brand-500 font-semibold">
                 {minMomentum >= 0 ? "+" : ""}{minMomentum}%
               </span>
@@ -161,6 +188,30 @@ export default function Screener() {
       {error && (
         <div className="card text-sm text-negative bg-red-50">{error}</div>
       )}
+
+      {/* Factor Analysis toggle */}
+      <div>
+        <button
+          onClick={toggleFactor}
+          className="flex items-center gap-1.5 text-xs font-semibold text-ink-secondary hover:text-brand-500 transition-colors px-1"
+        >
+          {factorOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+          Factor Analysis
+          <span className="text-ink-tertiary font-normal ml-1">— what drives each stock's ranking</span>
+        </button>
+        {factorOpen && (
+          <div className="mt-3">
+            {factorLoading ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="card h-52 animate-pulse bg-surface" />
+                <div className="card h-52 animate-pulse bg-surface" />
+              </div>
+            ) : (
+              <FactorPanel importance={importance} correlation={correlation} />
+            )}
+          </div>
+        )}
+      </div>
 
       {/* AI Report panel (shown when a stock is selected) */}
       {selected && (
@@ -187,7 +238,7 @@ export default function Screener() {
           ))}
           {filtered.length === 0 && (
             <p className="col-span-full text-center text-ink-tertiary text-sm py-12">
-              条件に一致する銘柄が見つかりません
+              No stocks match your filters. Try adjusting the momentum threshold or search.
             </p>
           )}
         </div>

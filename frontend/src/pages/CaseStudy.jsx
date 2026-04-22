@@ -65,10 +65,10 @@ export default function CaseStudy() {
     return (
       <div className="space-y-4">
         <Link to="/cases" className="flex items-center gap-1.5 text-sm text-ink-secondary hover:text-ink-primary">
-          <ArrowLeft size={14} /> 케이스 목록
+          <ArrowLeft size={14} /> Research
         </Link>
         <div className="card text-center py-12 text-ink-tertiary text-sm">
-          케이스를 찾을 수 없습니다.
+          Case not found.
         </div>
       </div>
     );
