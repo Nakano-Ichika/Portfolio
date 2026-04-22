@@ -42,9 +42,10 @@ export default function Backtest() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const [tsRes, statsRes] = await Promise.all([
+        const [tsRes, statsRes, benchRes] = await Promise.all([
           fetch(API_BASE + "/api/backtest"),
           fetch(API_BASE + "/api/backtest/stats"),
+          fetch(API_BASE + "/api/backtest/benchmark"),
         ]);
         if (!tsRes.ok || !statsRes.ok)
           throw new Error("Backtest data not found. Run backtest.py first.");
@@ -52,9 +53,19 @@ export default function Backtest() {
         const ts = await tsRes.json();
         const st = await statsRes.json();
 
+        // Merge benchmark by date (ignore if unavailable)
+        let benchMap = {};
+        if (benchRes.ok) {
+          const bench = await benchRes.json();
+          bench.forEach((p) => { benchMap[p.date] = p.value; });
+        }
+
         // Thin out for chart performance
         const step = Math.max(1, Math.floor(ts.length / 300));
-        setSeries(ts.filter((_, i) => i % step === 0 || i === ts.length - 1));
+        const merged = ts
+          .filter((_, i) => i % step === 0 || i === ts.length - 1)
+          .map((p) => ({ ...p, benchmark: benchMap[p.date] ?? null }));
+        setSeries(merged);
         setStats(st);
       } catch (err) {
         setError(err.message);
@@ -180,6 +191,16 @@ export default function Backtest() {
                 strokeWidth={2}
                 dot={false}
                 activeDot={{ r: 4 }}
+              />
+              <Line
+                type="monotone"
+                dataKey="benchmark"
+                name="N225"
+                stroke="#F59E0B"
+                strokeWidth={1.5}
+                strokeDasharray="4 2"
+                dot={false}
+                activeDot={{ r: 3 }}
               />
             </ComposedChart>
           </ResponsiveContainer>

@@ -15,6 +15,11 @@ build/
 # Cache
 cache/
 *.csv
+# Allow pre-generated data files committed for deployment
+!backend/benchmark_result.csv
+!backend/backtest_result.csv
+!backend/screener_result.csv
+!backend/portfolio.csv
 
 # OS
 .DS_Store

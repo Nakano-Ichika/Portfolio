@@ -9,6 +9,7 @@ load_dotenv()
 CACHE_DIR = os.getenv("CACHE_DIR", "./cache")
 PORTFOLIO_PATH = os.getenv("PORTFOLIO_PATH", "./portfolio.csv")
 OUTPUT_PATH = os.getenv("BACKTEST_OUTPUT", "./backtest_result.csv")
+BENCHMARK_PATH = os.getenv("BENCHMARK_OUTPUT", "./benchmark_result.csv")
 
 START_DATE = os.getenv("BACKTEST_START", "2024-01-19")
 END_DATE = os.getenv("BACKTEST_END", "2026-01-16")
@@ -61,6 +62,11 @@ def run_backtest() -> pd.Series:
 
     # --- Save ---
     cumulative.to_csv(OUTPUT_PATH)
+
+    bench_aligned = bench_cumulative.reindex(cumulative.index, method="ffill")
+    bench_aligned = bench_aligned / bench_aligned.iloc[0]
+    bench_aligned.name = "Benchmark"
+    bench_aligned.to_csv(BENCHMARK_PATH)
 
     # --- Metrics ---
     total_return = (cumulative.iloc[-1] - 1) * 100
