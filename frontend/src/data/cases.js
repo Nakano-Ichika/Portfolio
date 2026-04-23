@@ -128,9 +128,9 @@ export const CASES = [
       },
       {
         id: "margin-recovery",
-        title: "Margin recovery timeline",
-        body: "The July factor model tracked Hanwha Ocean's Sharpe ratio over rolling 252-day windows. The ratio improved from 0.31 (Q1 2024) to 0.74 (Q4 2024) — consistent with the market beginning to price in the margin recovery thesis before it appears in reported earnings.",
-        type: "model",
+        title: "Why margins lag the orderbook",
+        body: "New vessel contract prices averaged $240M in 2023–2024, up 41% from the 2020 trough. The gap between orderbook strength and reported earnings is mechanical: steel and labour costs are real and current; the higher vessel prices exist in backlog but don't appear as revenue until delivery, typically 18–24 months after signing. The legacy low-price contracts — signed when yards were desperate for volume — are what's hitting the income statement now.",
+        type: "source",
       },
       {
         id: "hanwha-flng",
@@ -141,8 +141,8 @@ export const CASES = [
       {
         id: "pbr-context",
         title: "PBR in historical context",
-        body: "During the 2007–2008 Korean shipbuilding boom, yard PBRs reached 2.5–3.0x. The current 0.92x reflects genuine market scepticism — not just a sector de-rating. The July factor model's inverse-volatility screener ranks Hanwha Ocean in the top tertile of its universe on risk-adjusted momentum, suggesting price action has stabilised relative to volatility even as absolute return has lagged.",
-        type: "model",
+        body: "During the 2007–2008 Korean shipbuilding boom, yard PBRs reached 2.5–3.0x as earnings surged on high-priced deliveries. The current 0.92x — below book value during a confirmed order boom — reflects market scepticism about the timing of margin recovery, not about the demand cycle itself. Historically, Korean yards have re-rated sharply once operating leverage kicks in on higher-priced contracts. The question is when, not whether.",
+        type: "source",
       },
     ],
   },
