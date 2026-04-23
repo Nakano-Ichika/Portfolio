@@ -172,7 +172,7 @@ export default function Landing() {
         <Section num="04" title="The numbers">
           {/* Prose intro with key numbers inline */}
           <p className="prose-reading mb-8">
-            At current prices, Hanwha Ocean trades at{" "}
+            At current prices, {c.company} trades at{" "}
             <strong className="text-ink-primary">{seasoning.multiples.pbr}x book value</strong> — below
             NAV despite a confirmed orderbook of{" "}
             <strong className="text-ink-primary">{c.hook.keyMetric.value}</strong> annual revenue.
