@@ -22,6 +22,7 @@ export default function Screener() {
   const [minMomentum, setMinMomentum] = useState(-100);
   const [sortBy, setSortBy] = useState("sharpe");
   const [filterOpen, setFilterOpen] = useState(false);
+  const [screenerDate, setScreenerDate] = useState(null);
 
   // Selected stock for AI report
   const [selected, setSelected] = useState(null);
@@ -53,13 +54,18 @@ export default function Screener() {
   };
 
   useEffect(() => {
-    fetch(API_BASE + "/api/screener")
-      .then((r) => {
-        if (!r.ok) throw new Error("Screener data not found. Run fundamentals.py first.");
-        return r.json();
-      })
-      .then(setStocks)
-      .catch((e) => setError(e.message))
+    Promise.all([
+      fetch(API_BASE + "/api/screener"),
+      fetch(API_BASE + "/api/data/status"),
+    ]).then(async ([r, statusRes]) => {
+      if (!r.ok) throw new Error("Screener data not found. Run fundamentals.py first.");
+      const data = await r.json();
+      setStocks(data);
+      if (statusRes.ok) {
+        const status = await statusRes.json();
+        if (status.screener) setScreenerDate(status.screener);
+      }
+    }).catch((e) => setError(e.message))
       .finally(() => setLoading(false));
   }, []);
 
@@ -100,7 +106,9 @@ export default function Screener() {
         <div>
           <h1 className="text-xl font-bold text-ink-primary">Screener</h1>
           <p className="text-sm text-ink-secondary mt-0.5">
-            {loading ? "Loading…" : `${filtered.length} / ${stocks.length} stocks`}
+            {loading
+            ? "Loading…"
+            : `${filtered.length} / ${stocks.length} stocks${screenerDate ? ` · as of ${screenerDate}` : ""}`}
           </p>
         </div>
         <button

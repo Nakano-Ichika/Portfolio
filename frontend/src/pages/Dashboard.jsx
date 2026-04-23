@@ -38,16 +38,18 @@ export default function Dashboard() {
   const [series, setSeries] = useState([]);
   const [stats, setStats] = useState(null);
   const [benchTotal, setBenchTotal] = useState(null);
+  const [dataStatus, setDataStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAll = async () => {
       try {
-        const [tsRes, statsRes, benchRes] = await Promise.all([
+        const [tsRes, statsRes, benchRes, statusRes] = await Promise.all([
           fetch(API_BASE + "/api/backtest"),
           fetch(API_BASE + "/api/backtest/stats"),
           fetch(API_BASE + "/api/backtest/benchmark"),
+          fetch(API_BASE + "/api/data/status"),
         ]);
 
         if (!tsRes.ok || !statsRes.ok)
@@ -63,6 +65,7 @@ export default function Dashboard() {
             setBenchTotal((bench[bench.length - 1].value - 1) * 100);
           bench.forEach((p) => { benchMap[p.date] = p.value; });
         }
+        if (statusRes.ok) setDataStatus(await statusRes.json());
 
         const step = Math.max(1, Math.floor(ts.length / 300));
         setSeries(
@@ -88,14 +91,16 @@ export default function Dashboard() {
       {/* Thesis */}
       <div>
         <p className="text-sm text-ink-secondary leading-relaxed">
-          A factor model for Japan equities — 51 TSE Prime stocks screened by
-          momentum, volatility, and fundamentals. This is the backtest.
+          I wanted to know if momentum and low-volatility factors generate consistent
+          alpha in Japan's equity market. I didn't trust the first result. Here's what
+          the data says — and what it can't tell you yet.
         </p>
-        {stats && (
-          <p className="text-xs text-ink-tertiary mt-1.5">
-            {stats.start_date} → {stats.end_date}
-          </p>
-        )}
+        <p className="text-xs text-ink-tertiary mt-2">
+          {dataStatus?.screener
+            ? `Screener data as of ${dataStatus.screener}`
+            : "Screener data"}
+          {stats ? ` · Backtest: ${stats.start_date} → ${stats.end_date}` : ""}
+        </p>
       </div>
 
       {/* Error */}

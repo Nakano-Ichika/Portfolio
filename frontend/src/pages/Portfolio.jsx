@@ -22,10 +22,10 @@ function AllocationTooltip({ active, payload }) {
     <div className="bg-card border border-border rounded-xl px-3 py-2 text-xs shadow-card-md">
       <p className="font-semibold text-ink-primary mb-1">{name}</p>
       <p className="text-ink-secondary">
-        ウェイト: <span className="text-ink-primary font-medium">{(value * 100).toFixed(1)}%</span>
+        Weight: <span className="text-ink-primary font-medium">{(value * 100).toFixed(1)}%</span>
       </p>
       <p className="text-ink-secondary">
-        金額: <span className="text-ink-primary font-medium">{p.position_yen?.toLocaleString("ja-JP")}円</span>
+        Amount: <span className="text-ink-primary font-medium">¥{p.position_yen?.toLocaleString("ja-JP")}</span>
       </p>
     </div>
   );
@@ -37,15 +37,23 @@ export default function Portfolio() {
   const [error, setError] = useState(null);
   const [capital, setCapital] = useState(1_000_000);
   const [inputCapital, setInputCapital] = useState("1000000");
+  const [portfolioDate, setPortfolioDate] = useState(null);
 
   const fetchPortfolio = useCallback(async (cap) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/api/portfolio?capital=${cap}`);
-      if (!res.ok) throw new Error("ポートフォリオデータが見つかりません");
+      const [res, statusRes] = await Promise.all([
+        fetch(`${API_BASE}/api/portfolio?capital=${cap}`),
+        fetch(`${API_BASE}/api/data/status`),
+      ]);
+      if (!res.ok) throw new Error("Portfolio data not found. Run fundamentals.py first.");
       const data = await res.json();
       setPositions(data);
+      if (statusRes.ok) {
+        const status = await statusRes.json();
+        if (status.portfolio) setPortfolioDate(status.portfolio);
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -76,9 +84,9 @@ export default function Portfolio() {
     <div className="space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-ink-primary">ポートフォリオ</h1>
+        <h1 className="text-xl font-bold text-ink-primary">Portfolio</h1>
         <p className="text-sm text-ink-secondary mt-0.5">
-          逆ボラティリティ加重 — ボラが低い銘柄ほど大きく配分
+          Inverse-volatility weighting{portfolioDate ? ` · data as of ${portfolioDate}` : ""}
         </p>
       </div>
 
@@ -86,7 +94,7 @@ export default function Portfolio() {
       <div className="card flex items-center gap-3 flex-wrap">
         <div className="flex-1 min-w-[200px]">
           <label className="block text-xs font-medium text-ink-secondary mb-1">
-            運用資金 (円)
+            Capital (JPY)
           </label>
           <input
             type="text"
@@ -101,7 +109,7 @@ export default function Portfolio() {
           className="flex items-center gap-1.5 bg-brand-500 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-brand-600 transition-colors mt-4"
         >
           <RefreshCw size={14} />
-          再計算
+          Recalculate
         </button>
       </div>
 
@@ -116,10 +124,10 @@ export default function Portfolio() {
           {/* Donut chart */}
           <div className="card">
             <p className="text-sm font-semibold text-ink-primary mb-1">
-              配分比率
+              Allocation
             </p>
             <p className="text-xs text-ink-secondary mb-4">
-              合計: {totalAllocated.toLocaleString("ja-JP")}円
+              Total: ¥{totalAllocated.toLocaleString("ja-JP")}
             </p>
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -151,12 +159,12 @@ export default function Portfolio() {
           {/* Position table */}
           <div className="card overflow-auto">
             <p className="text-sm font-semibold text-ink-primary mb-4">
-              ポジション一覧
+              Positions
             </p>
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
-                  {["コード", "ボラ(%)", "ウェイト", "金額(円)"].map((h) => (
+                  {["Code", "Vol (%)", "Weight", "Amount (JPY)"].map((h) => (
                     <th
                       key={h}
                       className="pb-2 text-left text-xs font-medium text-ink-secondary"
@@ -185,7 +193,7 @@ export default function Portfolio() {
                       </span>
                     </td>
                     <td className="py-2.5 text-ink-primary tabular-nums font-medium">
-                      {p.position_yen?.toLocaleString("ja-JP")}
+                      ¥{p.position_yen?.toLocaleString("ja-JP")}
                     </td>
                   </tr>
                 ))}

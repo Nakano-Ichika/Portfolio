@@ -5,6 +5,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import pandas as pd
 import os
+from datetime import datetime
 from dotenv import load_dotenv
 
 from factor_model import get_correlation_data, get_factor_importance_data
@@ -203,6 +204,29 @@ def get_report(req: ReportRequest):
         req.code, req.momentum_pct, req.per, req.pbr, req.roe
     )
     return {"report": text}
+
+
+# ---------------------------------------------------------------------------
+# Data status
+# ---------------------------------------------------------------------------
+
+@app.get("/api/data/status")
+def get_data_status():
+    """Returns last-generated date for each data file (from filesystem mtime)."""
+    files = {
+        "screener":  SCREENER_PATH,
+        "backtest":  BACKTEST_PATH,
+        "portfolio": PORTFOLIO_PATH,
+        "benchmark": BENCHMARK_PATH,
+    }
+    result = {}
+    for key, path in files.items():
+        if os.path.exists(path):
+            mtime = os.path.getmtime(path)
+            result[key] = datetime.fromtimestamp(mtime).strftime("%Y-%m-%d")
+        else:
+            result[key] = None
+    return result
 
 
 # ---------------------------------------------------------------------------
