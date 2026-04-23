@@ -235,4 +235,10 @@ def get_data_status():
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "data": {
+            "screener": os.path.exists(SCREENER_PATH),
+            "backtest": os.path.exists(BACKTEST_PATH),
+        },
+    }

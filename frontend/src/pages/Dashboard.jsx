@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useBackend } from "../context/BackendContext";
 import {
   ComposedChart, Area, Line, XAxis, YAxis, Tooltip,
   ResponsiveContainer, ReferenceLine, Legend, CartesianGrid,
@@ -35,6 +36,7 @@ function ChartTooltip({ active, payload, label }) {
 }
 
 export default function Dashboard() {
+  const { warm } = useBackend();
   const [series, setSeries] = useState([]);
   const [stats, setStats] = useState(null);
   const [benchTotal, setBenchTotal] = useState(null);
@@ -43,6 +45,7 @@ export default function Dashboard() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (!warm) return;
     const fetchAll = async () => {
       try {
         const [tsRes, statsRes, benchRes, statusRes] = await Promise.all([
@@ -81,7 +84,7 @@ export default function Dashboard() {
       }
     };
     fetchAll();
-  }, []);
+  }, [warm]);
 
   const isPositive = (stats?.total_return ?? 0) >= 0;
 

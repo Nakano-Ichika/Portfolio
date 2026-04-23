@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useBackend } from "../context/BackendContext";
 import {
   ComposedChart, Line, XAxis, YAxis, Tooltip,
   ResponsiveContainer, ReferenceLine, Legend, CartesianGrid,
@@ -48,6 +49,7 @@ function ChartTooltip({ active, payload, label }) {
 }
 
 export default function Backtest() {
+  const { warm } = useBackend();
   const [mode, setMode] = useState("simple");
   const [series, setSeries] = useState([]);
   const [stats, setStats] = useState(null);
@@ -58,6 +60,7 @@ export default function Backtest() {
 
   // Fetch stats + benchmark once
   useEffect(() => {
+    if (!warm) return;
     const init = async () => {
       try {
         const [tsRes, statsRes, benchRes] = await Promise.all([
@@ -90,7 +93,7 @@ export default function Backtest() {
       }
     };
     init();
-  }, []);
+  }, [warm]);
 
   // Fetch walk-forward series on mode switch
   const switchToWalkForward = useCallback(async () => {

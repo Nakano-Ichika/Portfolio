@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import { useBackend } from "../context/BackendContext";
 import { Search, SlidersHorizontal, X, ChevronDown, ChevronUp } from "lucide-react";
 import StockCard from "../components/StockCard";
 import AIReport from "../components/AIReport";
@@ -21,6 +22,7 @@ export default function Screener() {
   const [search, setSearch] = useState("");
   const [minMomentum, setMinMomentum] = useState(-100);
   const [sortBy, setSortBy] = useState("sharpe");
+  const { warm } = useBackend();
   const [filterOpen, setFilterOpen] = useState(false);
   const [screenerDate, setScreenerDate] = useState(null);
 
@@ -54,6 +56,7 @@ export default function Screener() {
   };
 
   useEffect(() => {
+    if (!warm) return;
     Promise.all([
       fetch(API_BASE + "/api/screener"),
       fetch(API_BASE + "/api/data/status"),
@@ -67,7 +70,7 @@ export default function Screener() {
       }
     }).catch((e) => setError(e.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [warm]);
 
   const filtered = useMemo(() => {
     return stocks

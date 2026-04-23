@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useBackend } from "../context/BackendContext";
 import {
   PieChart, Pie, Cell, Tooltip,
   ResponsiveContainer, Legend,
@@ -35,6 +36,7 @@ export default function Portfolio() {
   const [positions, setPositions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { warm } = useBackend();
   const [capital, setCapital] = useState(1_000_000);
   const [inputCapital, setInputCapital] = useState("1000000");
   const [portfolioDate, setPortfolioDate] = useState(null);
@@ -62,8 +64,9 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
+    if (!warm) return;
     fetchPortfolio(capital);
-  }, [capital, fetchPortfolio]);
+  }, [warm, capital, fetchPortfolio]);
 
   const handleApply = () => {
     const v = parseFloat(inputCapital.replace(/,/g, ""));
