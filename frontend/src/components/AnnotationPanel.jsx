@@ -27,12 +27,10 @@ export default function AnnotationPanel({ annotation, onClose }) {
         onClick={onClose}
       />
 
-      {/* Panel — desktop: right side. Mobile: bottom sheet */}
-      <div className="fixed z-50 bg-white shadow-panel
-        right-0 top-0 bottom-0 w-full max-w-[360px]
-        md:translate-x-0
-        flex flex-col
-        transition-transform duration-300 ease-out"
+      {/* Panel — mobile: bottom sheet. Desktop: right side */}
+      <div className="fixed z-50 bg-white shadow-panel flex flex-col transition-transform duration-300 ease-out
+        bottom-0 left-0 right-0 max-h-[72vh] rounded-t-2xl
+        md:top-0 md:bottom-0 md:left-auto md:right-0 md:w-[360px] md:max-h-none md:rounded-none"
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-border">

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-export default function useScrollNav(showAfter = 80) {
+export default function useScrollNav(showAfter = 500) {
   const [visible, setVisible] = useState(false);
   const lastY = useRef(0);
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CASES } from "../data/cases";
 import AnnotationPanel from "../components/AnnotationPanel";
@@ -52,7 +53,7 @@ export default function Landing() {
           </p>
 
           {/* Headline */}
-          <h1 className="text-display font-bold text-ink-primary mb-8">
+          <h1 className="text-[2rem] sm:text-[2.5rem] md:text-[3rem] lg:text-display font-bold text-ink-primary mb-8 leading-[1.1]">
             {hook.headline}
           </h1>
 
@@ -63,8 +64,8 @@ export default function Landing() {
         </div>
 
         {/* Scroll hint */}
-        <div className="absolute bottom-10 left-8 md:left-16 lg:left-24 flex flex-col items-start gap-1">
-          <div className="w-px h-10 bg-border animate-pulse" />
+        <div className="absolute bottom-10 left-8 md:left-16 lg:left-24">
+          <ChevronDown size={18} className="text-ink-tertiary animate-bounce" strokeWidth={1.5} />
         </div>
       </section>
 
@@ -94,7 +95,7 @@ export default function Landing() {
               { key: "Q", text: knife.scq.q, italic: true },
             ].map(({ key, text, italic }) => (
               <div key={key} className="flex gap-6">
-                <span className="text-[40px] font-bold text-border leading-none flex-shrink-0 select-none hidden md:block">
+                <span className="text-[40px] font-bold text-ink-tertiary/25 leading-none flex-shrink-0 select-none hidden md:block">
                   {key}
                 </span>
                 <p className={`prose-reading ${italic ? "italic text-ink-primary font-medium" : ""} pt-1`}>
