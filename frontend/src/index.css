@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-surface text-ink-primary font-sans antialiased;
+    @apply bg-white text-ink-primary font-sans antialiased;
   }
 
   * {
@@ -13,12 +13,26 @@
 }
 
 @layer components {
-  /* Shared card base */
+  /* Card — used only on Methodology page */
   .card {
-    @apply bg-card rounded-2xl shadow-card p-5;
+    @apply bg-white rounded-2xl shadow-card p-5 border border-border;
   }
 
-  /* Value chip: positive/negative coloured badge */
+  /* Report prose helpers */
+  .prose-reading {
+    @apply text-reading text-ink-secondary;
+  }
+  .prose-headline {
+    @apply text-headline font-bold text-ink-primary tracking-tight;
+  }
+
+  /* Annotation trigger — subtle amber dotted underline */
+  .annotatable {
+    @apply border-b border-dashed border-amber-400 cursor-pointer;
+    @apply hover:bg-amber-50 transition-colors rounded-sm;
+  }
+
+  /* Value chips */
   .chip-positive {
     @apply inline-flex items-center gap-1 text-xs font-semibold text-positive bg-green-50 px-2 py-0.5 rounded-full;
   }
@@ -26,18 +40,15 @@
     @apply inline-flex items-center gap-1 text-xs font-semibold text-negative bg-red-50 px-2 py-0.5 rounded-full;
   }
 
-  /* Subtle divider */
   .divider {
     @apply border-t border-border;
   }
 }
 
-/* Smooth number transitions */
 .num-transition {
   transition: color 0.3s ease;
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }

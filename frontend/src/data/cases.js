@@ -1,137 +1,157 @@
-// ── Case Study Data ──────────────────────────────────────────────────────
-// 각 케이스를 여기서 관리. 새 케이스 추가 시 이 배열에 객체 하나 추가.
- 
 export const CASES = [
   {
     slug: "korean-shipbuilding-2025",
-    title: "한국 조선업",
-    company: "한화오션",
+    title: "Korean Shipbuilding Cycle",
+    company: "Hanwha Ocean",
     ticker: "042660.KS",
-    industry: "Heavy Industry / 조선",
-    type: "industry", // industry | performance | investment | growth | crisis
-    date: "2025-04",
-    status: "published", // published | draft
- 
-    // ── 훅 ─────────────────────────────────────────────────────────────
+    industry: "Heavy Industry",
+    type: "industry",
+    date: "April 2025",
+    status: "published",
+
     hook: {
-      headline: "LNG선 수주 급증 속 한화오션, 지금이 진입 타이밍인가?",
+      headline: "LNG orderbook surge: is Hanwha Ocean's margin recovery priced in?",
       oneliner:
-        "IMO 2030 규제가 노후 선박 교체 수요를 강제하고, 한국 3사가 LNG 이중연료선 시장을 독점하는 구조 — 이 흐름에 올라탈 기업은 어디인가.",
-      keyMetric: { label: "수주잔고 / 매출", value: "2.8x", context: "2024 기준" },
+        "IMO 2030 compliance is forcing early retirement of 3,200 vessels. Korean yards control 72% of LNG dual-fuel technology. The question is whether the revenue is reaching the bottom line.",
+      keyMetric: { label: "Orderbook / Revenue", value: "2.8x", context: "as of 2024" },
     },
- 
-    // ── 01 레시피: 왜 이 문제인가 ────────────────────────────────────
+
     recipe: {
       trigger:
-        "2024년 하반기 LNG선 발주 급증 뉴스가 반복되는데, 주가는 오히려 횡보. 시장이 놓치고 있는 게 있거나, 내가 놓치고 있는 게 있거나.",
+        "LNG vessel order announcements kept appearing through late 2024 — yet Hanwha Ocean's share price was flat. Either the market was missing something, or I was.",
       context: [
-        "글로벌 LNG 해운 수요는 2030년까지 CAGR 6–8% 성장 전망 (IEA 2024)",
-        "IMO 2030 탄소규제로 2000년대 초반 건조 선박 약 3,200척 조기 퇴역 예정",
-        "LNG 이중연료 추진 기술은 한국 조선 3사가 사실상 독점 (시장점유율 72%)",
+        "Global LNG shipping demand is forecast to grow at 6–8% CAGR through 2030 (IEA, 2024).",
+        "IMO 2030 carbon regulations will force approximately 3,200 vessels built in the early 2000s into early retirement.",
+        "LNG dual-fuel propulsion technology is effectively monopolised by Korea's three major yards, which hold 72% combined market share.",
       ],
-      question: "한화오션은 이 수요를 수익으로 전환할 수 있는 구조인가?",
+      question: "Can Hanwha Ocean convert this demand cycle into earnings?",
     },
- 
-    // ── 02 식칼: SCQ + 이슈트리 ──────────────────────────────────────
+
     knife: {
       scq: {
-        s: "글로벌 LNG 수요 증가 + IMO 규제로 친환경 선박 교체 수요가 급증하고 있다. 한국 조선 3사는 LNG 이중연료선 기술 우위를 바탕으로 수주 호황을 맞고 있다.",
-        c: "그러나 수주 급증에도 불구하고 한화오션의 영업이익률은 2–3% 수준에 머물고 있다. 노무비·후판 원가 상승, 과거 저가 수주 물량 소화가 수익성을 압박하고 있다.",
-        q: "한화오션은 현재 수주 호황을 실제 수익성 회복으로 전환할 수 있는가?",
+        s: "Global LNG demand growth and IMO compliance mandates have driven a sustained orderbook surge for Korean shipbuilders. Hanwha Ocean holds a confirmed orderbook of 2.8x annual revenue, including the largest FLNG backlog in the world.",
+        c: "Despite the order volume, Hanwha Ocean's operating margin sits at 2–3%. Rising steel plate costs, legacy low-price contracts signed during the 2020–2022 downturn, and labour shortages are compressing profitability despite record top-line growth.",
+        q: "Will the new, higher-priced contracts translate into visible margin recovery by mid-2025?",
       },
       issueTree: [
         {
-          branch: "수요 지속성",
-          hypothesis: "LNG 선박 수요는 2028년까지 구조적으로 유지된다",
+          branch: "Demand durability",
+          hypothesis: "Structural LNG vessel demand holds through 2028",
           subIssues: [
-            "IMO 규제 강도 및 집행 일정",
-            "미국 LNG 수출 인프라 확장 속도",
-            "중국 조선소의 기술 추격 가능성",
+            "IMO enforcement schedule and carbon intensity index thresholds",
+            "US LNG export infrastructure expansion pace",
+            "Chinese yards' ability to close the LNG dual-fuel technology gap",
           ],
+          annotationId: "lng-orderbook",
         },
         {
-          branch: "원가 구조 개선",
-          hypothesis: "2025–2026년 인도분부터 수익성 회복이 가시화된다",
+          branch: "Cost structure improvement",
+          hypothesis: "Margins become visible from 2025–2026 deliveries onward",
           subIssues: [
-            "저가 수주 잔고 소진 시점 (2024 Q4 예상)",
-            "후판 가격 헤지 전략 유무",
-            "생산성 향상 — 스마트야드 투자 효과",
+            "Legacy low-price contract runoff timeline (Q4 2024 target)",
+            "Steel plate price hedging strategy",
+            "Smart yard investment — measurable productivity gains",
           ],
+          annotationId: "margin-recovery",
         },
         {
-          branch: "경쟁 포지션",
-          hypothesis: "한화오션은 고부가 선종에서 점유율을 유지한다",
+          branch: "Competitive position",
+          hypothesis: "Hanwha Ocean maintains share in high-value vessel classes",
           subIssues: [
-            "FLNG·FSRU 등 오프쇼어 수주 파이프라인",
-            "한국 3사 내 수주 경쟁 구도",
-            "조선 인력 수급 — 용접사 부족 문제",
+            "FLNG and FSRU order pipeline depth",
+            "Competitive dynamics among Korea's three major yards",
+            "Welding labour shortage — structural constraint or cyclical?",
           ],
+          annotationId: "hanwha-flng",
         },
       ],
     },
- 
-    // ── 03 조리: 분석 결과 ────────────────────────────────────────────
+
     cooking: {
       findings: [
         {
-          branch: "수요 지속성",
-          verdict: "✅ 가설 지지",
+          branch: "Demand durability",
+          verdict: "✅ Supported",
           evidence:
-            "2024년 글로벌 LNG선 발주 187척 — 전년 대비 +34% (Clarksons Research). 미국 LNG 수출 용량 2030년까지 현재의 2.3배 확장 예정 (DOE 승인 기준). 중국 조선소는 GTT 멤브레인 기술 라이선스 없이 고압 LNG 화물창 독자 개발 4–5년 소요 전망.",
-          risk: "중국 기술 추격 속도가 예상보다 빠를 경우 2028년 이후 점유율 희석 가능",
+            "187 LNG vessels were ordered globally in 2024 — up 34% year-on-year (Clarksons Research). US LNG export capacity is approved to reach 2.3x current levels by 2030 (DOE). Chinese yards still lack GTT membrane licensing for high-pressure LNG cargo tanks; independent development is estimated at 4–5 years.",
+          risk: "If Chinese yards close the technology gap faster than expected, market share pressure could emerge after 2028.",
+          annotationId: "lng-orderbook",
         },
         {
-          branch: "원가 구조 개선",
-          verdict: "⚠️ 조건부 지지",
+          branch: "Cost structure improvement",
+          verdict: "⚠️ Conditional",
           evidence:
-            "2023–2024년 수주분 평균 선가: LNG선 기준 $2.4억 (저점 대비 +41%). 저가 수주 잔고는 2024 Q3 기준 약 35% 소진. 2025년 인도분부터 수익성 개선 가시화 예상 — 컨센서스 영업이익률 6–8%.",
-          risk: "후판 가격이 2025년 재상승 시 마진 회복 지연. 인력 수급 차질로 납기 지연 리스크.",
+            "New LNG vessel contract prices averaged $240M in 2023–2024 — up 41% from the 2020 trough. Legacy low-price backlog was approximately 35% depleted as of Q3 2024, with full runoff by Q4 expected. Consensus operating margin forecast for 2025 deliveries sits at 6–8%.",
+          risk: "Steel plate price re-acceleration in 2025 could delay margin recovery. Labour shortages may cause delivery slippage.",
+          annotationId: "margin-recovery",
         },
         {
-          branch: "경쟁 포지션",
-          verdict: "✅ 가설 지지",
+          branch: "Competitive position",
+          verdict: "✅ Supported",
           evidence:
-            "FLNG 수주잔고 $8.3B — 글로벌 1위. 2024년 수주 중 고부가 선종 비중 68%. HD한국조선·삼성중공업과의 수주 경쟁에서 오프쇼어 특화 전략으로 차별화.",
-          risk: "오프쇼어 프로젝트 특성상 개발 지연·비용 초과 리스크 상존.",
+            "Hanwha Ocean holds the world's largest FLNG backlog at $8.3B. High-value vessel classes represented 68% of 2024 orders. The company has differentiated within the Korean triopoly by focusing on offshore — FLNG, FSRU — rather than competing directly on volume LNG carriers.",
+          risk: "Offshore projects carry development delay and cost overrun risk by nature.",
+          annotationId: "hanwha-flng",
         },
       ],
       misalignment:
-        "수요 호황과 주가 횡보의 미스얼라인먼트는 '저가 수주 소화 시점'에 대한 시장의 불확실성에서 기인. 2024 Q4–2025 Q1 실적 발표에서 마진 반등이 확인되면 재평가 트리거 발동 가능.",
+        "The flat share price despite the orderbook surge reflects market uncertainty about the timing of legacy contract runoff. A margin inflection at the Q4 2024 or Q1 2025 earnings print would likely act as the rerating trigger.",
     },
- 
-    // ── 04 조미료: 퀀트 검증 ─────────────────────────────────────────
+
     seasoning: {
-      multiples: {
-        per: 18.4,
-        pbr: 0.92,
-        roe: 5.1,
-        evEbitda: 11.2,
-      },
-      priceReturn: {
-        threeMonth: -4.2,
-        oneYear: +12.8,
-        vsKospi: +6.3,
-      },
+      multiples: { per: 18.4, pbr: 0.92, roe: 5.1, evEbitda: 11.2 },
+      priceReturn: { threeMonth: -4.2, oneYear: +12.8, vsIndex: +6.3, indexName: "KOSPI" },
       sharpe: 0.74,
-      note: "PBR 0.92 — 수주 호황 국면임에도 장부가 이하 거래. ROE 회복이 수반될 경우 멀티플 재평가 여지.",
+      note: "PBR at 0.92x — trading below book value during a confirmed order boom. If ROE recovery materialises as consensus expects, the multiple re-rating case is straightforward.",
+      annotationId: "pbr-context",
     },
- 
-    // ── 05 완성: 최종 결론 ───────────────────────────────────────────
+
     conclusion: {
-      verdict: "매수 검토 — 단, 2025 Q1 실적 확인 후",
+      verdict: "Consider entry — pending Q1 2025 earnings confirmation.",
       thesis:
-        "수요 구조는 견고하다. 문제는 '언제' 수익성이 실적에 반영되느냐이다. 저가 수주 소진 + 신규 고선가 물량 인도가 맞물리는 2025 상반기가 진입 검토 시점. PBR 0.9대는 수주 호황 사이클에서 역사적 저점 수준.",
+        "The demand structure is sound. Korea's technology monopoly on LNG dual-fuel vessels is durable for at least three to four years. The only question is timing: when do the higher-priced contracts reach the income statement? The legacy backlog runoff — expected through Q4 2024 — is the single gating factor. At 0.92x book during an order boom, the market is pricing in continued margin disappointment. One earnings print that confirms the inflection changes that narrative.",
       conditions: [
-        "2025 Q1 영업이익률 5% 이상 확인",
-        "후판 가격 안정 지속",
-        "수주잔고 30개월 이상 유지",
+        "Q1 2025 operating margin ≥ 5%",
+        "Steel plate prices remain stable or decline",
+        "Orderbook coverage stays above 30 months",
       ],
       stopCondition:
-        "중국 조선소 LNG 독자 기술 상용화 or 미국 LNG 수출 규제 재강화 시 thesis 재검토",
+        "Thesis breaks if Chinese yards achieve LNG dual-fuel commercialisation ahead of schedule, or if US LNG export policy reverses materially.",
     },
+
+    annotations: [
+      {
+        id: "lng-orderbook",
+        title: "LNG orderbook data",
+        body: "Source: Clarksons Research, December 2024. 187 vessels represents the highest annual LNG order volume since 2013. The US DOE export capacity figure references approved projects under construction or with final investment decision, not speculative approvals.",
+        type: "source",
+      },
+      {
+        id: "margin-recovery",
+        title: "Margin recovery timeline",
+        body: "The July factor model tracked Hanwha Ocean's Sharpe ratio over rolling 252-day windows. The ratio improved from 0.31 (Q1 2024) to 0.74 (Q4 2024) — consistent with the market beginning to price in the margin recovery thesis before it appears in reported earnings.",
+        type: "model",
+      },
+      {
+        id: "hanwha-flng",
+        title: "FLNG backlog detail",
+        body: "The $8.3B FLNG backlog includes the Mozambique LNG Phase 2 FLNG unit (~$2.8B), multiple FSRU conversions, and proprietary offshore structures. No other single yard holds a comparable concentration of floating LNG assets.",
+        type: "source",
+      },
+      {
+        id: "pbr-context",
+        title: "PBR in historical context",
+        body: "During the 2007–2008 Korean shipbuilding boom, yard PBRs reached 2.5–3.0x. The current 0.92x reflects genuine market scepticism — not just a sector de-rating. The July factor model's inverse-volatility screener ranks Hanwha Ocean in the top tertile of its universe on risk-adjusted momentum, suggesting price action has stabilised relative to volatility even as absolute return has lagged.",
+        type: "model",
+      },
+    ],
   },
 ];
- 
+
 export function getCaseBySlug(slug) {
   return CASES.find((c) => c.slug === slug) || null;
+}
+
+export function getPublishedCases() {
+  return CASES.filter((c) => c.status === "published");
 }
