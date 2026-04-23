@@ -18,7 +18,7 @@ export const CASES = [
 
     recipe: {
       trigger:
-        "LNG vessel order announcements kept appearing through late 2024 — yet Hanwha Ocean's share price was flat. Either the market was missing something, or I was.",
+        "LNG vessel order announcements kept appearing through late 2024 — yet Hanwha Ocean's share price was flat. The consensus bear case was China. I looked at the company instead.",
       context: [
         "Global LNG shipping demand is forecast to grow at 6–8% CAGR through 2030 (IEA, 2024).",
         "IMO 2030 carbon regulations will force approximately 3,200 vessels built in the early 2000s into early retirement.",
@@ -55,14 +55,14 @@ export const CASES = [
           annotationId: "margin-recovery",
         },
         {
-          branch: "Competitive position",
-          hypothesis: "Hanwha Ocean maintains share in high-value vessel classes",
+          branch: "Organisational readiness",
+          hypothesis: "Hanwha Ocean can execute the technology transition despite significant internal friction",
           subIssues: [
-            "FLNG and FSRU order pipeline depth",
-            "Competitive dynamics among Korea's three major yards",
-            "Welding labour shortage — structural constraint or cyclical?",
+            "Labour union resistance: history of strikes and organised opposition to automation investment",
+            "Policy-to-strategy lag: government smart-manufacturing support exists, but capital allocation timelines are unclear",
+            "Cross-functional gap: strategic roadmap designed without sufficient operational input from yard teams",
           ],
-          annotationId: "hanwha-flng",
+          annotationId: "org-risk",
         },
       ],
     },
@@ -86,16 +86,16 @@ export const CASES = [
           annotationId: "margin-recovery",
         },
         {
-          branch: "Competitive position",
-          verdict: "✅ Supported",
+          branch: "Organisational readiness",
+          verdict: "⚠️ Conditional",
           evidence:
-            "Hanwha Ocean holds the world's largest FLNG backlog at $8.3B. High-value vessel classes represented 68% of 2024 orders. The company has differentiated within the Korean triopoly by focusing on offshore — FLNG, FSRU — rather than competing directly on volume LNG carriers.",
-          risk: "Offshore projects carry development delay and cost overrun risk by nature.",
-          annotationId: "hanwha-flng",
+            "Hanwha Ocean's labour unions have a documented history of coordinated industrial action — including a 51-day strike in 2022 that delayed deliveries. Smart-yard automation, the critical investment for defending cost position against future Chinese competition, directly threatens the jobs of the skilled welders and plate-cutters the union represents. Management has announced automation targets, but capex allocation to smart-yard programmes has lagged stated ambitions. Interviews and earnings transcripts reveal a consistent gap between what the strategic team describes as the technology roadmap and what yard-level commentary suggests is actually being implemented.",
+          risk: "If management chooses industrial peace over technology investment — a rational short-term choice — the cost advantage that justifies the premium orderbook narrows as Chinese yards continue developing. The FLNG backlog is real. The question is whether it gets delivered on time and on budget given these internal constraints.",
+          annotationId: "org-risk",
         },
       ],
       misalignment:
-        "The flat share price despite the orderbook surge reflects market uncertainty about the timing of legacy contract runoff. A margin inflection at the Q4 2024 or Q1 2025 earnings print would likely act as the rerating trigger.",
+        "The market is watching China. The more immediate risk is internal. Labour friction, policy-to-execution lag, and a strategy-workforce communication gap are compressing the window in which Hanwha Ocean can deploy smart-yard investment before Chinese yards close the technology distance. The Q4 2024 earnings call is worth listening to not just for margin confirmation, but for how management discusses automation capex — that signals whether they are prioritising the technology window or managing labour relations.",
     },
 
     seasoning: {
@@ -109,14 +109,15 @@ export const CASES = [
     conclusion: {
       verdict: "Consider entry — pending Q1 2025 earnings confirmation.",
       thesis:
-        "The demand structure is sound. Korea's technology monopoly on LNG dual-fuel vessels is durable for at least three to four years. The only question is timing: when do the higher-priced contracts reach the income statement? The legacy backlog runoff — expected through Q4 2024 — is the single gating factor. At 0.92x book during an order boom, the market is pricing in continued margin disappointment. One earnings print that confirms the inflection changes that narrative.",
+        "The demand structure is sound. Korea's technology monopoly on LNG dual-fuel vessels is durable for at least three to four years. The only question is timing: when do the higher-priced contracts reach the income statement? But there is a second question the market is not asking: can Hanwha Ocean execute the smart-yard transition fast enough to maintain its cost advantage before that technology window closes? The consensus bear case is China. The more proximate risk is internal — a labour structure that has historically resisted automation, and an organisation where strategic ambition and operational reality are not always in conversation. Both questions need a positive answer for the thesis to hold.",
       conditions: [
         "Q1 2025 operating margin ≥ 5%",
+        "Smart-yard capex allocation confirmed in 2025 guidance — signals management is prioritising the technology window",
         "Steel plate prices remain stable or decline",
         "Orderbook coverage stays above 30 months",
       ],
       stopCondition:
-        "Thesis breaks if Chinese yards achieve LNG dual-fuel commercialisation ahead of schedule, or if US LNG export policy reverses materially.",
+        "Thesis breaks if: labour disputes materially delay the 2025–2026 delivery schedule; or smart-yard capex falls in 2025 guidance — signalling management has chosen industrial peace over technology investment; or Chinese yards announce GTT membrane licensing agreements ahead of schedule.",
     },
 
     annotations: [
@@ -133,9 +134,9 @@ export const CASES = [
         type: "source",
       },
       {
-        id: "hanwha-flng",
-        title: "FLNG backlog detail",
-        body: "The $8.3B FLNG backlog includes the Mozambique LNG Phase 2 FLNG unit (~$2.8B), multiple FSRU conversions, and proprietary offshore structures. No other single yard holds a comparable concentration of floating LNG assets.",
+        id: "org-risk",
+        title: "The internal execution risk",
+        body: "Three mechanisms compound each other. First, labour: Hanwha Ocean's unions have historically opposed automation on the grounds of job displacement, and the 2022 strike — 51 days — is the most recent data point. Second, policy lag: the Korean government's K-Shipbuilding Renaissance Plan announced smart-manufacturing subsidies, but disbursement timelines and company-level implementation schedules diverge materially. Third, communication structure: strategic planning and yard operations work with limited cross-functional visibility, meaning technology investment decisions get made without full operational feedback. None of these is fatal individually. Together they create an execution risk that the market, focused on China, is not pricing.",
         type: "source",
       },
       {
